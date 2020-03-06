@@ -100,9 +100,9 @@
 /* Fading animation */
 /* Thanks to w3schools! */
 .fade {
-  -webkit-animation-name: fade;
-  -webkit-animation-duration: 1.5s;
-  animation: fade 1.5s forwards;
+  /* -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s; */
+  animation: fade .8s forwards;
   /* animation-duration: 1.5s; */
 }
 

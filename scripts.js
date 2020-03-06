@@ -42,9 +42,9 @@ function createMarkup(i) {
   let markup = `
     <div class="testimonial__container fade">
       <img class="testimonial__image" src=${testimonials[i].imgURL} alt="">
-      <div class="testimonial__quote testimonial__quote--short">${testimonials[i].quoteShort}</div>
-      <div class="testimonial__read-more">Read more</div>
-      <div class="testimonial__quote testimonial__quote--long no-show">${testimonials[i].quoteLong}</div><div class="testimonial__read-more testimonial__read-more--less no-show">Read less</div>
+      <div class="testimonial__quote testimonial__quote--short fade">${testimonials[i].quoteShort}</div>
+      <div class="testimonial__read-more fade ">Read more</div>
+      <div class="testimonial__quote testimonial__quote--long  fade no-show">${testimonials[i].quoteLong}</div><div class="testimonial__read-more testimonial__read-more--less fade no-show">Read less</div>
       <div class="testimonial__id">
         <div class="testimonial__name">${testimonials[i].name}</div>
         <div class="testimonial__title">${testimonials[i].title}</div>
