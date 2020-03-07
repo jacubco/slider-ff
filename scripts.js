@@ -3,21 +3,26 @@ const dotsDiv = document.querySelector('.dots');
 const slides = testimonials.length;
 let currentSlide = 0
 
-testimonial = document.querySelector('.testimonial');
-document.querySelector('body').addEventListener('load', loadTestimonial(currentSlide));
 
+// Load first Testimonial on page load
+loadTestimonial(currentSlide);
+// Create dots representing the slides
+createIndicators();
+const dots = dotsDiv.querySelectorAll('.dot');
+
+
+// Listen for click on a dot
+dotsDiv.addEventListener('click', getID);
+
+// Load next testimonial on click on right arrow
 document.querySelector('.arrow--right')
 .addEventListener('click', function(){loadNextTestimonial();});
 
+// Load previous testimonial on click on left arrow
 document.querySelector('.arrow--left')
 .addEventListener('click', function(){loadPreviousTestimonial();});
 
-function loadTestimonial(i) {
-  let markup = createMarkup(i);
-  testimonial.innerHTML = markup;
-  listenForQuoteToggle()
-}
-
+// Determine which slide to show on click on right arrow
 function loadNextTestimonial() {
   if (currentSlide < slides - 1) {
     currentSlide += 1;
@@ -28,6 +33,7 @@ function loadNextTestimonial() {
   changeActiveState(currentSlide);
 }
 
+// Determine which slide to show on click on left arrow
 function loadPreviousTestimonial() {
   if (currentSlide > 0) {
     currentSlide -= 1;
@@ -38,6 +44,9 @@ function loadPreviousTestimonial() {
   changeActiveState(currentSlide);
 }
 
+// View
+
+// Create testimonial markup
 function createMarkup(i) {
   let markup = `
     <div class="testimonial__container fade">
@@ -54,6 +63,15 @@ function createMarkup(i) {
   return markup
 }
 
+// Add testimonial markup to testimonials div
+function loadTestimonial(i) {
+  testimonial = document.querySelector('.testimonial');
+  let markup = createMarkup(i);
+  testimonial.innerHTML = markup;
+  listenForQuoteToggle()
+}
+
+// Create and add dots (representing available slides)
 function createIndicators() {
   let html = '<div class="dot active" id="0"></div>'
   for(i = 1; i < testimonials.length; i++) {
@@ -63,21 +81,12 @@ function createIndicators() {
   dotsDiv.innerHTML = html;
 }
 
-createIndicators();
-
-const dots = dotsDiv.querySelectorAll('.dot');
-
+// Change active state of the dots / indicators for active slide
 function changeActiveState(currentSlide) {
   var current = document.getElementsByClassName("active");
   current[0].className = current[0].className.replace(" active", "");
   dots[currentSlide].className += ' active';
 }
-
-
-dotsDiv.addEventListener('click', event => console.log(event.target));
-
-
-dotsDiv.addEventListener('click', getID);
 
 // Get ID when clicking on a dot
 function getID(event) {
@@ -91,12 +100,12 @@ function getID(event) {
 }
 
 
-// Toggle read more
-
+// Listen for click on read more
 function listenForQuoteToggle() {
   document.querySelectorAll('.testimonial__read-more').forEach(item => item.addEventListener('click', toggleQuote));
 }
 
+// Toggle read more
 function toggleQuote() {
   document.querySelector('.testimonial__quote--short').classList.toggle('no-show')
   document.querySelector('.testimonial__quote--long').classList.toggle('no-show')
@@ -106,4 +115,3 @@ function toggleQuote() {
   document.querySelector('.testimonial__read-more--less').classList.toggle('no-show')
 
 }
-
