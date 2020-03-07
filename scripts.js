@@ -1,26 +1,41 @@
+// TODO
+
+// controller --> change slide: use event bubbling instead of three different listeners
+
+
+
+
 // GLOBALS
 const dotsDiv = document.querySelector('.dots');
 const slides = testimonials.length;
 let currentSlide = 0
 
+var controller = function() {
+  // Listen for events
+  // Listen for click on a dot --> load corresponding testimonial
+  dotsDiv.addEventListener('click', getID);
 
-// Load first Testimonial on page load
-loadTestimonial(currentSlide);
-// Create dots representing the slides
-createIndicators();
+  // Listen for click on right arrow --> load next testimonial
+  document.querySelector('.arrow--right').addEventListener('click', function(){loadNextTestimonial();});
+
+  // Listen for click on left arrow --> load previous testimonial
+  document.querySelector('.arrow--left').addEventListener('click', function(){loadPreviousTestimonial();});
+
+
+  // Load first Testimonial on page load
+  loadTestimonial(currentSlide);
+  // Create dots representing the slides
+  createIndicators();
+}
+controller();
+
+
+
 const dots = dotsDiv.querySelectorAll('.dot');
 
 
-// Listen for click on a dot
-dotsDiv.addEventListener('click', getID);
 
-// Load next testimonial on click on right arrow
-document.querySelector('.arrow--right')
-.addEventListener('click', function(){loadNextTestimonial();});
 
-// Load previous testimonial on click on left arrow
-document.querySelector('.arrow--left')
-.addEventListener('click', function(){loadPreviousTestimonial();});
 
 // Determine which slide to show on click on right arrow
 function loadNextTestimonial() {
@@ -65,17 +80,20 @@ function createMarkup(i) {
 
 // Add testimonial markup to testimonials div
 function loadTestimonial(i) {
+  console.log('slide: ' + i);
   testimonial = document.querySelector('.testimonial');
   let markup = createMarkup(i);
   testimonial.innerHTML = markup;
   listenForQuoteToggle()
+
+  console.log('currentSlide: ' + currentSlide)
+
 }
 
 // Create and add dots (representing available slides)
 function createIndicators() {
   let html = '<div class="dot active" id="0"></div>'
   for(i = 1; i < testimonials.length; i++) {
-    console.log('dot');
     html += `<div class="dot" id="${i}"></div>`
   };
   dotsDiv.innerHTML = html;
@@ -92,10 +110,10 @@ function changeActiveState(currentSlide) {
 function getID(event) {
   if (event.target.classList.contains('dot')) {
     var ID = event.target.getAttribute('id');
-    console.log(ID);
-    loadTestimonial(ID);
-    changeActiveState(ID);
-    return ID
+    currentSlide = parseInt(ID, 10);
+    console.log(currentSlide);
+    loadTestimonial(currentSlide);
+    changeActiveState(currentSlide);
   }
 }
 
