@@ -2,12 +2,20 @@
 
 // controller --> change slide: use event bubbling instead of three different listeners
 
+// controller --> Refactor getID function
+
+
+// GLOBALS
+const dotsDiv = document.querySelector('.dots');
+const slides = testimonials.length;
+let currentSlide = 0;
+
 var view = (function() {
 
   var DOMStrings = {
-    dotsDiv: '.dots',
-    arrowRight: '.arrow--right',
-    arrowLeft: '.arrow--left',
+    dotsDiv: document.querySelector('.dots'),
+    arrowRight: document.querySelector('.arrow--right'),
+    arrowLeft: document.querySelector('.arrow--left'),
     testimonialDiv: '.testimonial',
     testimonialContainer: '.testimonial-container',
 
@@ -23,32 +31,39 @@ var view = (function() {
 })();
 
 
-// GLOBALS
-const dotsDiv = document.querySelector('.dots');
-const slides = testimonials.length;
-let currentSlide = 0
+var controller = (function(view) {
+  var DOMStrings = view.getDOMStrings();
+  
+  function listenForEvents() {
+    // Listen for click on a dot
+    DOMStrings.dotsDiv
+    .addEventListener('click', getID);
 
-var controller = (function(daView) {
-  var myVar = daView.getDOMStrings();
-  console.log(myVar);
+    // Listen for click on right arrow
+    DOMStrings.arrowRight
+    .addEventListener('click', loadNextTestimonial);
 
+    // Listen for click on left arrow --> load previous testimonial
+    DOMStrings.arrowLeft
+    .addEventListener('click', loadPreviousTestimonial);
 
-  // Listen for events
-  // Listen for click on a dot --> load corresponding testimonial
-  dotsDiv.addEventListener('click', getID);
+  }
+  
+  return {
+    init: function(currentSlide) {
+      console.log('slider initialized');
+      // Load first Testimonial automatically
+      loadTestimonial(currentSlide);
+      // Create dots representing the slides
+      createIndicators();
+      listenForEvents()
+    }
+  }
 
-  // Listen for click on right arrow --> load next testimonial
-  document.querySelector('.arrow--right').addEventListener('click', function(){loadNextTestimonial();});
-
-  // Listen for click on left arrow --> load previous testimonial
-  document.querySelector('.arrow--left').addEventListener('click', function(){loadPreviousTestimonial();});
-
-  // Load first Testimonial on page load
-  loadTestimonial(currentSlide);
-  // Create dots representing the slides
-  createIndicators();
-  // console.log(DOMStrings.dotsDiv);
+ 
 })(view);
+
+controller.init(currentSlide);
 
 
 const dots = dotsDiv.querySelectorAll('.dot');
