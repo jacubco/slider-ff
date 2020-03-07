@@ -2,7 +2,25 @@
 
 // controller --> change slide: use event bubbling instead of three different listeners
 
+var view = (function() {
 
+  var DOMStrings = {
+    dotsDiv: '.dots',
+    arrowRight: '.arrow--right',
+    arrowLeft: '.arrow--left',
+    testimonialDiv: '.testimonial',
+    testimonialContainer: '.testimonial-container',
+
+  }
+
+  return {
+    getDOMStrings: function() {
+      return DOMStrings;
+    }
+
+  }
+ 
+})();
 
 
 // GLOBALS
@@ -10,7 +28,11 @@ const dotsDiv = document.querySelector('.dots');
 const slides = testimonials.length;
 let currentSlide = 0
 
-var controller = function() {
+var controller = (function(daView) {
+  var myVar = daView.getDOMStrings();
+  console.log(myVar);
+
+
   // Listen for events
   // Listen for click on a dot --> load corresponding testimonial
   dotsDiv.addEventListener('click', getID);
@@ -21,17 +43,16 @@ var controller = function() {
   // Listen for click on left arrow --> load previous testimonial
   document.querySelector('.arrow--left').addEventListener('click', function(){loadPreviousTestimonial();});
 
-
   // Load first Testimonial on page load
   loadTestimonial(currentSlide);
   // Create dots representing the slides
   createIndicators();
-}
-controller();
-
+  // console.log(DOMStrings.dotsDiv);
+})(view);
 
 
 const dots = dotsDiv.querySelectorAll('.dot');
+
 
 
 
@@ -117,6 +138,11 @@ function getID(event) {
   }
 }
 
+
+
+
+////////////////////////////////////
+/////////////////////////// READ MORE
 
 // Listen for click on read more
 function listenForQuoteToggle() {
