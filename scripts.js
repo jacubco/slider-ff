@@ -1,7 +1,5 @@
 // TODO
 
-// controller --> change slide: use event bubbling instead of three different listeners
-
 // controller --> Refactor getID function
 
 
@@ -11,19 +9,29 @@ const slides = testimonials.length;
 let currentSlide = 0;
 
 var view = (function() {
-
+  
   var DOMStrings = {
     dotsDiv: document.querySelector('.dots'),
     arrowRight: document.querySelector('.arrow--right'),
     arrowLeft: document.querySelector('.arrow--left'),
-    testimonialDiv: '.testimonial',
-    testimonialContainer: '.testimonial-container',
-
+    testimonialDiv: document.querySelector('.testimonial'),
+    testimonialsContainer: document.querySelector('.testimonials-container')
   }
 
   return {
     getDOMStrings: function() {
       return DOMStrings;
+    },
+
+    // Add testimonial markup to testimonials div
+    loadTestimonial: function(i) {
+      console.log('slide: ' + i);
+      console.log('currentSlide: ' + currentSlide)
+      
+      testimonial = document.querySelector('.testimonial');
+      var markup = createMarkup(i);
+      testimonial.innerHTML = markup;
+      listenForQuoteToggle()  
     }
 
   }
@@ -37,30 +45,27 @@ var controller = (function(view) {
   function listenForEvents() {
     // Listen for click on a dot
     DOMStrings.dotsDiv
-    .addEventListener('click', getID);
-
+    .addEventListener('click', function(e) {view.loadTestimonial(getID(e.target))});
     // Listen for click on right arrow
     DOMStrings.arrowRight
     .addEventListener('click', loadNextTestimonial);
-
     // Listen for click on left arrow --> load previous testimonial
     DOMStrings.arrowLeft
     .addEventListener('click', loadPreviousTestimonial);
-
-  }
+  };
   
   return {
+    // Set up slider
     init: function(currentSlide) {
       console.log('slider initialized');
       // Load first Testimonial automatically
-      loadTestimonial(currentSlide);
+      view.loadTestimonial(currentSlide);
       // Create dots representing the slides
       createIndicators();
       listenForEvents()
     }
-  }
+  };
 
- 
 })(view);
 
 controller.init(currentSlide);
@@ -68,9 +73,18 @@ controller.init(currentSlide);
 
 const dots = dotsDiv.querySelectorAll('.dot');
 
+// Determine which slide to show
+function determineCurrentSlide(eventTarget) {
+  console.log(eventTarget);
+  if (eventTarget.classList.contains('dot')) {
+    currentSlide = getID(eventTarget);
+    console.log(currentSlide);
+    console.log('dot clicked');
 
-
-
+  } else if (eventTarget.classList.contains('arrow--right')) {
+    console.log('right arrow clicked');
+  }
+}
 
 
 // Determine which slide to show on click on right arrow
@@ -80,7 +94,7 @@ function loadNextTestimonial() {
   } else {
     currentSlide = 0
   }
-  loadTestimonial(currentSlide);
+  view.loadTestimonial(currentSlide);
   changeActiveState(currentSlide);
 }
 
@@ -91,11 +105,9 @@ function loadPreviousTestimonial() {
   } else {
     currentSlide = slides - 1;
   }
-  loadTestimonial(currentSlide);
+  view.loadTestimonial(currentSlide);
   changeActiveState(currentSlide);
 }
-
-// View
 
 // Create testimonial markup
 function createMarkup(i) {
@@ -114,17 +126,6 @@ function createMarkup(i) {
   return markup
 }
 
-// Add testimonial markup to testimonials div
-function loadTestimonial(i) {
-  console.log('slide: ' + i);
-  testimonial = document.querySelector('.testimonial');
-  let markup = createMarkup(i);
-  testimonial.innerHTML = markup;
-  listenForQuoteToggle()
-
-  console.log('currentSlide: ' + currentSlide)
-
-}
 
 // Create and add dots (representing available slides)
 function createIndicators() {
@@ -143,14 +144,21 @@ function changeActiveState(currentSlide) {
 }
 
 // Get ID when clicking on a dot
-function getID(event) {
-  if (event.target.classList.contains('dot')) {
-    var ID = event.target.getAttribute('id');
-    currentSlide = parseInt(ID, 10);
-    console.log(currentSlide);
-    loadTestimonial(currentSlide);
-    changeActiveState(currentSlide);
-  }
+// function getID(event) {
+//   if (event.target.classList.contains('dot')) {
+//     var ID = event.target.getAttribute('id');
+//     currentSlide = parseInt(ID, 10);
+//     console.log(currentSlide);
+//     view.loadTestimonial(currentSlide);
+//     changeActiveState(currentSlide);
+//   }
+// }
+
+function getID(eventTarget) {
+  console.log(eventTarget);
+  var ID = eventTarget.getAttribute('id');
+  console.log(ID);
+  return parseInt(ID, 10);
 }
 
 
