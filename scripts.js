@@ -1,21 +1,53 @@
-// TODO
+var model = (function() {
+  var slides = {
+    total: testimonials.length,
+    currentSlide: 0,
+  };
 
-// controller --> Refactor getID function
+  // Use when dot is clicked to determine slide to display
+  function getID(eventTarget) {
+      var ID = eventTarget.getAttribute('id');
+      return parseInt(ID, 10);  
+  };
+
+  return {
+    getSlides: function() {
+      return slides;
+    },
+
+    updateCurrentSlide: function(clicked, eventTarget) {
+      if (clicked === 'right') {
+        if (slides.currentSlide < slides.total - 1) {
+          slides.currentSlide += 1;
+        } else {
+          slides.currentSlide = 0
+        }
+      } else if (clicked === 'left') {
+        if (slides.currentSlide > 0) {
+          slides.currentSlide -= 1;
+        } else {
+          slides.currentSlide = slides.total - 1;
+        }
+      } else if (clicked === 'dot') {
+        slides.currentSlide = getID(eventTarget)
+      } else {
+        slides.currentSlide = 0;
+      }
+    }
+
+  }
+
+})();
 
 
-// GLOBALS
-const dotsDiv = document.querySelector('.dots');
-const slides = testimonials.length;
-let currentSlide = 0;
+var view = (function(model) {
 
-var view = (function() {
-  
   var DOMStrings = {
     dotsDiv: document.querySelector('.dots'),
     arrowRight: document.querySelector('.arrow--right'),
     arrowLeft: document.querySelector('.arrow--left'),
     testimonialDiv: document.querySelector('.testimonial'),
-    testimonialsContainer: document.querySelector('.testimonials-container')
+    testimonialsContainer: document.querySelector('.testimonials-container'),
   }
 
   return {
@@ -24,47 +56,19 @@ var view = (function() {
     },
 
     // Add testimonial markup to testimonials div
-    loadTestimonial: function(i) {
+    loadTestimonial: function(slide) {
       testimonial = document.querySelector('.testimonial');
-      var markup = this.createMarkup(i);
+      var markup = this.createMarkup(slide);
       testimonial.innerHTML = markup;
       // listenForQuoteToggle()
     },
 
-    // Load Testimonial when dot is clicked
-    loadTestimonialFromID: function(e) {
-      currentSlide = getID(e.target)
-      this.loadTestimonial(currentSlide);
-      this.changeActiveState(currentSlide);
-    },
-
-    // Determine which slide to show on click on right arrow
-    loadNextTestimonial: function() {
-      if (currentSlide < slides - 1) {
-        currentSlide += 1;
-      } else {
-        currentSlide = 0
-      }
-      view.loadTestimonial(currentSlide);
-      view.changeActiveState(currentSlide);
-    },
-
-    // Determine which slide to show on click on left arrow
-    loadPreviousTestimonial: function() {
-      if (currentSlide > 0) {
-        currentSlide -= 1;
-      } else {
-        currentSlide = slides - 1;
-      }
-      view.loadTestimonial(currentSlide);
-      view.changeActiveState(currentSlide);
-    },
-
-    // Change active state of the dots / indicators for active slide
-    changeActiveState: function(currentSlide) {
-      var current = document.getElementsByClassName("active");
-      current[0].className = current[0].className.replace(" active", "");
-      dots[currentSlide].className += ' active';
+    // Change active state of the dots to current slide
+    changeActiveState: function(slide) {
+      var dots = DOMStrings.dotsDiv.querySelectorAll('.dot');
+      var current = document.getElementsByClassName('active');
+      current[0].className = current[0].className.replace(' active', '');
+      dots[slide].className += ' active';
     },
 
     // Create and add dots (representing available slides) at page load
@@ -73,7 +77,7 @@ var view = (function() {
       for(i = 1; i < testimonials.length; i++) {
         html += `<div class="dot" id="${i}"></div>`
       };
-      dotsDiv.innerHTML = html;
+      DOMStrings.dotsDiv.innerHTML = html;
     },
 
     // Create testimonial markup
@@ -126,76 +130,60 @@ var view = (function() {
       `
       return markup;
     }
-
   }
  
-})();
+})(model);
 
 
-var controller = (function(view) {
+var controller = (function(view, model) {
+
+  var slides = model.getSlides();
   var DOMStrings = view.getDOMStrings();
   
   function listenForEvents() {
     // Listen for click on a dot
     DOMStrings.dotsDiv
-    .addEventListener('click', function(e) {view.loadTestimonialFromID(e)});
+    .addEventListener('click', function(e){buildTestimonial('dot', e.target)});
     // Listen for click on right arrow
     DOMStrings.arrowRight
-    .addEventListener('click', view.loadNextTestimonial);
+    .addEventListener('click', function(){buildTestimonial('right')});
     // Listen for click on left arrow --> load previous testimonial
     DOMStrings.arrowLeft
-    .addEventListener('click', view.loadPreviousTestimonial);
+    .addEventListener('click', function(){buildTestimonial('left')});
   };
   
+  function buildTestimonial(clicked, eventTarget) {
+    // Check if click did not just got to dots div without hiting a dot
+    if (eventTarget && eventTarget.classList.contains('dots')) {
+      return;
+    } else {
+        model.updateCurrentSlide(clicked, eventTarget);
+        var slides = model.getSlides();
+        view.loadTestimonial(slides.currentSlide);
+        view.changeActiveState(slides.currentSlide);
+    }
+  };
+
   return {
-    // Set up slider
-    init: function(currentSlide) {
-      console.log('slider initialized');
-      
+    // Set up slider on page load
+    init: function() { 
       // Load first Testimonial
-      view.loadTestimonial(currentSlide);
-      
+      view.loadTestimonial(slides.currentSlide);
       // Create dots representing the slides
       view.createIndicators();
-
       // Listen for clicks on chevrons and dots
       listenForEvents()
     }
   };
 
-})(view);
+})(view, model);
 
-controller.init(currentSlide);
-
-const dots = dotsDiv.querySelectorAll('.dot');
-
-// Determine which slide to show
-function determineCurrentSlide(eventTarget) {
-  console.log(eventTarget);
-  if (eventTarget.classList.contains('dot')) {
-    currentSlide = getID(eventTarget);
-    console.log(currentSlide);
-    console.log('dot clicked');
-
-  } else if (eventTarget.classList.contains('arrow--right')) {
-    console.log('right arrow clicked');
-  }
-}
+controller.init();
 
 
 
-function getID(eventTarget) {
-  console.log(eventTarget);
-  var ID = eventTarget.getAttribute('id');
-  console.log(ID);
-  return parseInt(ID, 10);
-}
-
-
-
-
-////////////////////////////////////
-/////////////////////////// READ MORE
+// READ MORE ////////////////////////////
+/////////////////////////// READ MORE //
 
 // Listen for click on read more
 // function listenForQuoteToggle() {
