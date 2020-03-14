@@ -25,13 +25,16 @@ var view = (function() {
 
     // Add testimonial markup to testimonials div
     loadTestimonial: function(i) {
-      console.log('slide: ' + i);
-      console.log('currentSlide: ' + currentSlide)
-      
       testimonial = document.querySelector('.testimonial');
       var markup = createMarkup(i);
       testimonial.innerHTML = markup;
       // listenForQuoteToggle()
+    },
+
+    loadTestimonialFromID: function(e) {
+      currentSlide = getID(e.target)
+      view.loadTestimonial(currentSlide);
+      changeActiveState(currentSlide);
     }
 
   }
@@ -45,7 +48,7 @@ var controller = (function(view) {
   function listenForEvents() {
     // Listen for click on a dot
     DOMStrings.dotsDiv
-    .addEventListener('click', function(e) {view.loadTestimonial(getID(e.target))});
+    .addEventListener('click', function(e) {view.loadTestimonialFromID(e)});
     // Listen for click on right arrow
     DOMStrings.arrowRight
     .addEventListener('click', loadNextTestimonial);
@@ -58,10 +61,14 @@ var controller = (function(view) {
     // Set up slider
     init: function(currentSlide) {
       console.log('slider initialized');
-      // Load first Testimonial automatically
+      
+      // Load first Testimonial
       view.loadTestimonial(currentSlide);
+      
       // Create dots representing the slides
       createIndicators();
+
+      // Listen for clicks on chevrons and dots
       listenForEvents()
     }
   };
@@ -69,7 +76,6 @@ var controller = (function(view) {
 })(view);
 
 controller.init(currentSlide);
-
 
 const dots = dotsDiv.querySelectorAll('.dot');
 

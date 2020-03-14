@@ -12,7 +12,7 @@ const testimonials = [
     title: 'Professor in whatsoever at the Faculty of something at the University of Nowhere',
     quoteShort: '"Hooooraaay!"',
     quoteLong: '"Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam, distinctio in vitae cum dolor sed repudiandae saepe fuga quisquam neque nesciunt optio mollitia, pariatur, quam eligendi porro tempora asperiores modi."',
-    imgURL: 'https://placekeanu.com/150/150'
+    imgURL: 'http://placekitten.com/150/150'
   },
 
   {
@@ -28,6 +28,6 @@ const testimonials = [
     title: 'Professor in whatsoever at the Faculty of something at the University of Nowhere',
     quoteShort: '"blablbalblalbablblablablalabablablalbalbalblalblallba"',
     quoteLong: '"Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam, distinctio in vitae cum dolor sed repudiandae saepe fuga quisquam neque nesciunt optio mollitia, pariatur, quam eligendi porro tempora asperiores modi."',
-    imgURL: 'https://placekeanu.com/150/150'
+    imgURL: 'http://placekitten.com/150/150'
   }
 ]
