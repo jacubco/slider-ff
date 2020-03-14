@@ -26,15 +26,67 @@ var view = (function() {
     // Add testimonial markup to testimonials div
     loadTestimonial: function(i) {
       testimonial = document.querySelector('.testimonial');
-      var markup = createMarkup(i);
+      var markup = this.createMarkup(i);
       testimonial.innerHTML = markup;
       // listenForQuoteToggle()
     },
 
+    // Load Testimonial when dot is clicked
     loadTestimonialFromID: function(e) {
       currentSlide = getID(e.target)
       view.loadTestimonial(currentSlide);
       changeActiveState(currentSlide);
+    },
+
+    // Create testimonial markup
+    createMarkup: function(i) {
+      let markup = `
+        <div class="testimonial__container fade">
+          <img class="testimonial__image" src=${testimonials[i].imgURL} alt="">
+          <div class="testimonial__quote testimonial__quote--short fade">${testimonials[i].quoteShort}</div>
+          <div class="testimonial__read-more fade" data-toggle="modal" data-target="#myModal">Read more</div>
+          <div class="testimonial__quote testimonial__quote--long  fade no-show">${testimonials[i].quoteLong}</div><div class="testimonial__read-more testimonial__read-more--less fade no-show">Read less</div>
+          <div class="testimonial__id">
+            <div class="testimonial__name">${testimonials[i].name}</div>
+            <div class="testimonial__title">${testimonials[i].title}</div>
+          </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal" id="myModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <h4 class="modal-title lead">${testimonials[i].quoteLong}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <!-- Modal body -->
+              
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-6">
+                    <img class="testimonial__image rounded-circle" src=${testimonials[i].imgURL} alt="">
+                  </div>
+                  <div class="col-6 text-left pt-2">
+                    <div class="font-weight-bold">${testimonials[i].name}</div>
+                    <div class="font-weight-light">${testimonials[i].title}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal footer -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      `
+      return markup
     }
 
   }
@@ -115,56 +167,6 @@ function loadPreviousTestimonial() {
   changeActiveState(currentSlide);
 }
 
-// Create testimonial markup
-function createMarkup(i) {
-  let markup = `
-    <div class="testimonial__container fade">
-      <img class="testimonial__image" src=${testimonials[i].imgURL} alt="">
-      <div class="testimonial__quote testimonial__quote--short fade">${testimonials[i].quoteShort}</div>
-      <div class="testimonial__read-more fade" data-toggle="modal" data-target="#myModal">Read more</div>
-      <div class="testimonial__quote testimonial__quote--long  fade no-show">${testimonials[i].quoteLong}</div><div class="testimonial__read-more testimonial__read-more--less fade no-show">Read less</div>
-      <div class="testimonial__id">
-        <div class="testimonial__name">${testimonials[i].name}</div>
-        <div class="testimonial__title">${testimonials[i].title}</div>
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title lead">${testimonials[i].quoteLong}</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-
-          <!-- Modal body -->
-          
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-6">
-                <img class="testimonial__image rounded-circle" src=${testimonials[i].imgURL} alt="">
-              </div>
-              <div class="col-6 text-left pt-2">
-                <div class="font-weight-bold">${testimonials[i].name}</div>
-                <div class="font-weight-light">${testimonials[i].title}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  `
-  return markup
-}
 
 // Create and add dots (representing available slides)
 function createIndicators() {
