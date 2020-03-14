@@ -34,13 +34,51 @@ var view = (function() {
     // Load Testimonial when dot is clicked
     loadTestimonialFromID: function(e) {
       currentSlide = getID(e.target)
+      this.loadTestimonial(currentSlide);
+      this.changeActiveState(currentSlide);
+    },
+
+    // Determine which slide to show on click on right arrow
+    loadNextTestimonial: function() {
+      if (currentSlide < slides - 1) {
+        currentSlide += 1;
+      } else {
+        currentSlide = 0
+      }
       view.loadTestimonial(currentSlide);
-      changeActiveState(currentSlide);
+      view.changeActiveState(currentSlide);
+    },
+
+    // Determine which slide to show on click on left arrow
+    loadPreviousTestimonial: function() {
+      if (currentSlide > 0) {
+        currentSlide -= 1;
+      } else {
+        currentSlide = slides - 1;
+      }
+      view.loadTestimonial(currentSlide);
+      view.changeActiveState(currentSlide);
+    },
+
+    // Change active state of the dots / indicators for active slide
+    changeActiveState: function(currentSlide) {
+      var current = document.getElementsByClassName("active");
+      current[0].className = current[0].className.replace(" active", "");
+      dots[currentSlide].className += ' active';
+    },
+
+    // Create and add dots (representing available slides) at page load
+    createIndicators: function() {
+      var html = '<div class="dot active" id="0"></div>'
+      for(i = 1; i < testimonials.length; i++) {
+        html += `<div class="dot" id="${i}"></div>`
+      };
+      dotsDiv.innerHTML = html;
     },
 
     // Create testimonial markup
     createMarkup: function(i) {
-      let markup = `
+      var markup = `
         <div class="testimonial__container fade">
           <img class="testimonial__image" src=${testimonials[i].imgURL} alt="">
           <div class="testimonial__quote testimonial__quote--short fade">${testimonials[i].quoteShort}</div>
@@ -86,7 +124,7 @@ var view = (function() {
           </div>
         </div>
       `
-      return markup
+      return markup;
     }
 
   }
@@ -103,10 +141,10 @@ var controller = (function(view) {
     .addEventListener('click', function(e) {view.loadTestimonialFromID(e)});
     // Listen for click on right arrow
     DOMStrings.arrowRight
-    .addEventListener('click', loadNextTestimonial);
+    .addEventListener('click', view.loadNextTestimonial);
     // Listen for click on left arrow --> load previous testimonial
     DOMStrings.arrowLeft
-    .addEventListener('click', loadPreviousTestimonial);
+    .addEventListener('click', view.loadPreviousTestimonial);
   };
   
   return {
@@ -118,7 +156,7 @@ var controller = (function(view) {
       view.loadTestimonial(currentSlide);
       
       // Create dots representing the slides
-      createIndicators();
+      view.createIndicators();
 
       // Listen for clicks on chevrons and dots
       listenForEvents()
@@ -145,55 +183,6 @@ function determineCurrentSlide(eventTarget) {
 }
 
 
-// Determine which slide to show on click on right arrow
-function loadNextTestimonial() {
-  if (currentSlide < slides - 1) {
-    currentSlide += 1;
-  } else {
-    currentSlide = 0
-  }
-  view.loadTestimonial(currentSlide);
-  changeActiveState(currentSlide);
-}
-
-// Determine which slide to show on click on left arrow
-function loadPreviousTestimonial() {
-  if (currentSlide > 0) {
-    currentSlide -= 1;
-  } else {
-    currentSlide = slides - 1;
-  }
-  view.loadTestimonial(currentSlide);
-  changeActiveState(currentSlide);
-}
-
-
-// Create and add dots (representing available slides)
-function createIndicators() {
-  let html = '<div class="dot active" id="0"></div>'
-  for(i = 1; i < testimonials.length; i++) {
-    html += `<div class="dot" id="${i}"></div>`
-  };
-  dotsDiv.innerHTML = html;
-}
-
-// Change active state of the dots / indicators for active slide
-function changeActiveState(currentSlide) {
-  var current = document.getElementsByClassName("active");
-  current[0].className = current[0].className.replace(" active", "");
-  dots[currentSlide].className += ' active';
-}
-
-// Get ID when clicking on a dot
-// function getID(event) {
-//   if (event.target.classList.contains('dot')) {
-//     var ID = event.target.getAttribute('id');
-//     currentSlide = parseInt(ID, 10);
-//     console.log(currentSlide);
-//     view.loadTestimonial(currentSlide);
-//     changeActiveState(currentSlide);
-//   }
-// }
 
 function getID(eventTarget) {
   console.log(eventTarget);
